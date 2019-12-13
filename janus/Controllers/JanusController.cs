@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using overapp.janus.Models.Dtos.Request;
 using overapp.janus.Models.Dtos.Response;
@@ -12,22 +13,17 @@ namespace overapp.janus.Controllers
     {
         // GET: /<controller>/
         [HttpGet]
-        [Route("{apikey}/")]
-        public async Task<ActionResult<IEnumerable<TransactionDetails>>> List(string apikey)
+        [Route("{merchantkey}")]
+        public async Task<ActionResult<IEnumerable<TransactionDetails>>> ListTransactions(string merchantkey)
         {
-            return View();
+            return new List<TransactionDetails>();
         }
 
         [HttpPost]
-        [Route("{apikey}/")]
-        public async Task<ActionResult<TransactionDetails>> ProcessTransaction(TransactionRequest request)
+        [Route("{merchantkey}")]
+        public async Task<ActionResult<TransactionDetails>> ProcessTransaction(string merchantkey, TransactionRequest request)
         {
-            return View();
-        }
-
-        public IActionResult UnAuthorised()
-        {
-            return new UnauthorizedResult();
+            return new TransactionDetails();
         }
     }
 }
