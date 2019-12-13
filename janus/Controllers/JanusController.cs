@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using overapp.janus.Models.Dtos.Request;
+using overapp.janus.Models.Dtos.Response;
 
 namespace overapp.janus.Controllers
 {
@@ -8,15 +12,22 @@ namespace overapp.janus.Controllers
     {
         // GET: /<controller>/
         [HttpGet]
-        [Route("")]
-        public IActionResult List()
+        [Route("{apikey}/")]
+        public async Task<ActionResult<IEnumerable<TransactionDetails>>> List(string apikey)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("{apikey}/")]
+        public async Task<ActionResult<TransactionDetails>> ProcessTransaction(TransactionRequest request)
         {
             return View();
         }
 
         public IActionResult UnAuthorised()
         {
-            re
+            return new UnauthorizedResult();
         }
     }
 }
