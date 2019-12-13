@@ -16,6 +16,11 @@
     <Folder Include="Models\Dtos\Request\" />
     <Folder Include="Models\Dtos\Response\" />
     <Folder Include="Configurations\" />
+    <Folder Include="Managers\" />
+    <Folder Include="Infrastructure\" />
+    <Folder Include="Infrastructure\Services\" />
+    <Folder Include="Infrastructure\Repositories\" />
+    <Folder Include="Models\Domain\" />
   </ItemGroup>
 
   <ItemGroup>
