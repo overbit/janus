@@ -1,0 +1,107 @@
+openapi: 3.0.0
+info:
+  title: Bank
+  version: '1.0'
+  description: A generic bank api for processing cc payments
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /process/payment:
+    post:
+      summary: pay
+      tags:
+        - payments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: boolean
+                required:
+                  - id
+                  - status
+              examples: {}
+      operationId: post-process-payment
+      security:
+        - basic: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                card:
+                  $ref: '#/components/schemas/Card'
+                amount:
+                  type: string
+                currency:
+                  type: string
+                  minLength: 3
+                  maxLength: 3
+                  pattern: '[A-Z]+'
+                billing-details:
+                  $ref: '#/components/schemas/BillingInformation'
+              required:
+                - card
+                - amount
+                - currency
+                - billing-details
+            examples: {}
+      description: 'Process cc payment '
+components:
+  schemas:
+    Card:
+      title: Card
+      type: object
+      properties:
+        cvv:
+          type: string
+          minLength: 3
+          maxLength: 3
+          pattern: '[0-9]+'
+        exp-year:
+          type: string
+          format: date
+        exp-month:
+          type: string
+          format: date
+        clue:
+          type: string
+          minLength: 16
+          maxLength: 16
+          pattern: '[0-9]+'
+      x-tags:
+        - payments
+    BillingInformation:
+      title: BillingInformation
+      type: object
+      properties:
+        address-country:
+          type: string
+        address-city:
+          type: string
+        address-line:
+          type: string
+        last-name:
+          type: string
+        first-name:
+          type: string
+      required:
+        - first-name
+        - last-name
+        - address-line
+        - address-city
+        - address-country
+      x-tags:
+        - payments
+  securitySchemes:
+    basic:
+      type: http
+      scheme: Basic
