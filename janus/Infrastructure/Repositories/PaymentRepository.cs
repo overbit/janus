@@ -2,8 +2,5 @@
 {
     public class PaymentRepository : IPaymentRepository
     {
-        public PaymentRepository()
-        {
-        }
     }
 }

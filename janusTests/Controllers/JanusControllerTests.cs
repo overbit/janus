@@ -1,10 +1,24 @@
-﻿using System;
+﻿using NUnit.Framework;
+using overapp.janus.Controllers;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace janusTests.Controllers
+namespace overapp.janus.Controllers.Tests
 {
-    class JanusControllerTests
+    [TestFixture()]
+    public class JanusControllerTests
     {
+        [Test()]
+        public void ListTransactionsTest()
+        {
+            Assert.Fail();
+        }
+
+        [Test()]
+        public void ProcessTransactionTest()
+        {
+            Assert.Fail();
+        }
     }
 }

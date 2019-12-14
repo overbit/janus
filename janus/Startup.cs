@@ -48,10 +48,11 @@ namespace overapp.janus
             var swaggerConfig = Configuration.GetSection(typeof(OpenApiConfig).Name).Get<OpenApiConfig>();
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint
-            app.UseSwaggerUI(option => {
+            app.UseSwaggerUI(option =>
+            {
                 option.SwaggerEndpoint(swaggerConfig.EndpointUrl, swaggerConfig.EndpointName);
                 option.RoutePrefix = string.Empty;
-                });
+            });
 
 
             app.UseHttpsRedirection();
