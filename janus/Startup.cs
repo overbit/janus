@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using overapp.janus.Configurations;
 using overapp.janus.Infrastructure;
+using overapp.janus.Infrastructure.Services;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace overapp.janus
 {
@@ -76,6 +80,30 @@ namespace overapp.janus
 
     internal static class CustomExtensionsMethods
     {
+        internal static IServiceCollection AddCustomHttpClients(this IServiceCollection services)
+        {
+            //register http services
+            services.AddHttpClient<IBankService, BankService>()
+                .AddPolicyHandler(GetBankApiRetryPolicy())
+                .AddPolicyHandler(GetBankApiCircuitBreakerPolicy());
+
+            return services;
+        }
+
+        private static IAsyncPolicy<HttpResponseMessage> GetBankApiRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+        }
+
+        private static IAsyncPolicy<HttpResponseMessage> GetBankApiCircuitBreakerPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .CircuitBreakerAsync(5, TimeSpan.FromSeconds(15));
+        }
+
         internal static IServiceCollection AddSwaggerService(this IServiceCollection services, IConfiguration configuration)
         {
             var OpenApiConfig = configuration.GetSection(typeof(OpenApiConfig).Name).Get<OpenApiConfig>();
