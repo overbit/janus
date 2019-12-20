@@ -3,11 +3,13 @@ using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using overapp.janus.Configurations;
+using overapp.janus.Infrastructure;
 
 namespace overapp.janus
 {
@@ -30,6 +32,10 @@ namespace overapp.janus
             services.AddSwaggerService(Configuration);
 
             // DI
+
+            // If MS Sql available switch add Microsoft.EntityFrameworkCore.SqlServer and switch to SQL instead of in mem.
+            //services.AddDbContext<JanusContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Janus")));
+            services.AddDbContext<JanusContext>(options => options.UseInMemoryDatabase(databaseName: Configuration["DataStorage:DbName"]));
 
             services.AddControllers();
         }

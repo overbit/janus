@@ -1,10 +1,6 @@
 ﻿using NUnit.Framework;
-using overapp.janus.Infrastructure.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace overapp.janus.Infrastructure.Services.Tests
+namespace overapp.janus.Services.Tests
 {
     [TestFixture()]
     public class BankServiceTests

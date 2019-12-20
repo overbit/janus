@@ -1,8 +1,4 @@
 ﻿using NUnit.Framework;
-using overapp.janus.Infrastructure.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace overapp.janus.Infrastructure.Repositories.Tests
 {
@@ -10,7 +6,13 @@ namespace overapp.janus.Infrastructure.Repositories.Tests
     public class PaymentRepositoryTests
     {
         [Test()]
-        public void PaymentRepositoryTest()
+        public void GetTest()
+        {
+            Assert.Fail();
+        }
+
+        [Test()]
+        public void ListTest()
         {
             Assert.Fail();
         }
