@@ -16,5 +16,10 @@ namespace overapp.janus.Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public Task Add(Transaction transaction)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

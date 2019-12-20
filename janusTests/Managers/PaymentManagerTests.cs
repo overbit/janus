@@ -84,6 +84,10 @@ namespace overapp.janus.Managers.Tests
                                                                     req.CurrencyCode))
                             .ReturnsAsync(new TransactionResult { Id = "63ea10672f414485931862a49792699f" , Status = bankProcessedAsSuccess });
 
+            paymentRepoMock.Setup(repository => repository.Add(It.Is<Transaction>(transaction =>
+                transaction.Amount.Equals(req.Amount) &&
+                transaction.CurrencyCode == req.CurrencyCode))).Returns(Task.CompletedTask);
+
             var manager = new PaymentManager(paymentRepoMock.Object, merchantRepoMock.Object, bankServiceMock.Object);
 
             // Act 

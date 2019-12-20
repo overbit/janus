@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using overapp.janus.Infrastructure.Repositories;
 using overapp.janus.Infrastructure.Services;
 using overapp.janus.Mappers;
@@ -15,12 +17,14 @@ namespace overapp.janus.Managers
         private readonly IPaymentRepository paymentRepository;
         private readonly IMerchantRepository merchantRepository;
         private readonly IBankService bankService;
+        private ILogger<PaymentManager> logger;
 
-        public PaymentManager(IPaymentRepository paymentRepository, IMerchantRepository merchantRepository, IBankService bankService)
+        public PaymentManager(IPaymentRepository paymentRepository, IMerchantRepository merchantRepository, IBankService bankService, ILogger<PaymentManager> logger)
         {
             this.paymentRepository = paymentRepository;
             this.merchantRepository = merchantRepository;
             this.bankService = bankService;
+            this.logger = logger;
         }
 
         public async Task<TransactionDetails> GetPaymentDetails(string clientId, Guid paymentGuid)
@@ -60,6 +64,16 @@ namespace overapp.janus.Managers
                 BillingDetails = billingDetails,
                 CardDetails = card
             };
+
+            try
+            {
+                await paymentRepository.Add(transaction);
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Unable to store transaction: ", JsonSerializer.Serialize(transaction));
+                throw;
+            }
 
             return new TransactionResult
             {

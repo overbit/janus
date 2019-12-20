@@ -10,5 +10,7 @@ namespace overapp.janus.Infrastructure.Repositories
         Task<Transaction> Get(Guid paymentGuid);
         
         Task<IEnumerable<Transaction>> List(IEnumerable<Guid> paymentsGuid);
+
+        Task Add(Transaction transaction);
     }
 }
