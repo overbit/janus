@@ -9,10 +9,5 @@ namespace overapp.janus.Infrastructure.Repositories
         {
             throw new System.NotImplementedException();
         }
-
-        public Task<Merchant> Get(string clientId, string clientSecret)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
