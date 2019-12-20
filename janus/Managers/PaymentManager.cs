@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using overapp.janus.Infrastructure.Repositories;
 using overapp.janus.Infrastructure.Services;
+using overapp.janus.Mappers;
+using overapp.janus.Models.Domain;
 using overapp.janus.Models.Dtos.Request;
 using overapp.janus.Models.Dtos.Response;
 
@@ -38,7 +40,32 @@ namespace overapp.janus.Managers
 
         public async Task<TransactionResult> ProcessPayment(string clientId, TransactionRequest request)
         {
-            throw new NotImplementedException();
+            var card = TransactionMapper.MapToDomainCard(request.Card);
+            var billingDetails = TransactionMapper.MapToDomainBillingDetails(request.BillingDetails);
+            
+            var bankResponseTask = bankService.ProcessPayment(card, billingDetails, request.Amount, request.CurrencyCode);
+
+            var merchantIdTask = merchantRepository.Get(clientId);
+
+            var bankResponse = await bankResponseTask;
+            var merchant = await merchantIdTask;
+
+            var transaction = new Transaction
+            {
+                Amount = request.Amount,
+                CurrencyCode = request.CurrencyCode,
+                BankTransactionId = bankResponse.Id,
+                Guid = Guid.NewGuid().ToString("N"),
+                MerchantId = merchant.Id,
+                BillingDetails = billingDetails,
+                CardDetails = card
+            };
+
+            return new TransactionResult
+            {
+                Guid = transaction.Guid,
+                IsSuccess = bankResponse.Status
+            };
         }
     }
 }

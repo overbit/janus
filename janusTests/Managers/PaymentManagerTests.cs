@@ -3,7 +3,11 @@ using Moq;
 using NUnit.Framework;
 using overapp.janus.Infrastructure.Repositories;
 using overapp.janus.Infrastructure.Services;
+using overapp.janus.Models;
+using overapp.janus.Models.Domain;
 using overapp.janus.Models.Dtos.Request;
+using BillingDetails = overapp.janus.Models.Dtos.Request.BillingDetails;
+using Card = overapp.janus.Models.Dtos.Request.Card;
 
 namespace overapp.janus.Managers.Tests
 {
@@ -41,7 +45,9 @@ namespace overapp.janus.Managers.Tests
         //}
 
         [Test]
-        public async Task ProcessPaymentTest()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task ProcessPaymentTest(bool bankProcessedAsSuccess)
         {
             // Arrange 
             var clientId = "123";
@@ -67,6 +73,17 @@ namespace overapp.janus.Managers.Tests
                 }
             };
 
+            merchantRepoMock.Setup(repository => repository.Get(It.IsAny<string>())).ReturnsAsync(new Merchant{ ClientId = clientId, Id = 1 });
+            bankServiceMock.Setup(service => service.ProcessPayment(It.Is<Models.Domain.Card>(card => card.Clue == req.Card.Number &&
+                                                                                                      card.Cvv == req.Card.Cvv &&
+                                                                                                      card.ExpiryMonth == req.Card.ExpiryMonth &&
+                                                                                                      card.ExpiryYear == req.Card.ExpiryYear), 
+                                                                    It.Is<Models.Domain.BillingDetails>(details => details.FirstName == req.BillingDetails.FirstName &&
+                                                                                                                   details.LastName == req.BillingDetails.LastName), 
+                                                                    req.Amount, 
+                                                                    req.CurrencyCode))
+                            .ReturnsAsync(new TransactionResult { Id = "63ea10672f414485931862a49792699f" , Status = bankProcessedAsSuccess });
+
             var manager = new PaymentManager(paymentRepoMock.Object, merchantRepoMock.Object, bankServiceMock.Object);
 
             // Act 
@@ -74,7 +91,7 @@ namespace overapp.janus.Managers.Tests
 
             // Assert
             Assert.IsNotNull(result.Guid);
-            Assert.IsTrue(result.IsSuccess);
+            Assert.AreEqual(bankProcessedAsSuccess, result.IsSuccess);
         }
     }
 }

@@ -9,7 +9,5 @@
         public string ExpiryMonth { get; set; }
 
         public string ExpiryYear { get; set; }
-
-        public string Merchant { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace overapp.janus.Models.Domain
 {
@@ -8,7 +7,7 @@ namespace overapp.janus.Models.Domain
     {
         public string Id { get; set; }
 
-        public Guid Guid { get; set; }
+        public string Guid { get; set; }
 
         public string BankTransactionId { get; set; }
 
