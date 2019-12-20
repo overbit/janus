@@ -1,11 +1,15 @@
-﻿using System;
-
-namespace overapp.janus.Models.Dtos.Response
+﻿namespace overapp.janus.Models.Dtos.Response
 {
     public class TransactionResult
     {
-        public Guid Guid { get; set; }
+        /// <summary>
+        /// 32 char string representing the payment / transaction id
+        /// </summary>
+        public string Guid { get; set; }
 
+        /// <summary>
+        /// Status of the payment / transaction
+        /// </summary>
         public bool IsSuccess { get; set; }
     }
 }
