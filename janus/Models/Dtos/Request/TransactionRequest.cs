@@ -5,18 +5,19 @@ namespace overapp.janus.Models.Dtos.Request
 {
     public class TransactionRequest
     {
-        [Required]
-        public Card Card { get; set; }
 
         [Required]
-        public BillingDetails BillingDetails { get; set; }
-
-        [Required]
-        public double MyProperty { get; set; }
+        public double Amount { get; set; }
 
         [Required]
         [StringIsoCurrencyCode]
         public string CurrencyCode { get; set; }
+
+        [Required]
+        public Card Card { get; set; }
+        
+        [Required]
+        public BillingDetails BillingDetails { get; set; }
     }
 
     public class BillingDetails
@@ -42,15 +43,19 @@ namespace overapp.janus.Models.Dtos.Request
     public class Card
     {
         [Required]
-        public string Clue { get; set; }
+        [RegularExpression("[0-9]{16}")]
+        public string Number { get; set; }
 
         [Required]
+        [RegularExpression("[0-9]{3}")]
         public string Cvv { get; set; }
 
         [Required]
+        [RegularExpression("[0-9]{2}")]
         public string ExpiryMonth { get; set; }
 
         [Required]
+        [RegularExpression("[0-9]{2}")]
         public string ExpiryYear { get; set; }
     }
 }

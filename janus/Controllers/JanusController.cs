@@ -19,14 +19,28 @@ namespace overapp.janus.Controllers
             this.paymentManager = paymentManager;
         }
 
+        /// <summary>
+        /// Get the list of payment processed in behalf of the merchant
+        /// </summary>
+        /// <param name="client_id">Unique id per merchant</param>
+        /// <param name="client_secret">Unique secret between client and server</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TransactionDetails>>> ListTransactions([FromHeader]string client_id,
-                                                                                          [FromHeader]string client_secret)
+                                                                                          [FromHeader]string client_secret,
+                                                                                          [FromQuery]int? skip = null, 
+                                                                                          [FromQuery]int? take = null)
         {
-
-            return new List<TransactionDetails>();
+            return NotFound();
         }
 
+        /// <summary>
+        /// Get details of a processed payment (transaction)
+        /// </summary>
+        /// <param name="client_id">Unique id per merchant</param>
+        /// <param name="client_secret">Unique secret between client and server</param>
+        /// <param name="id">Payment / transaction id</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<TransactionDetails>> GetTransaction([FromHeader]string client_id,
                                                                            [FromHeader]string client_secret,
@@ -45,15 +59,19 @@ namespace overapp.janus.Controllers
             return new NotFoundResult();
         }
 
-        // TODO Validate CurrencyCode against RegionInfo 
+        /// <summary>
+        /// Process a new payment (transaction)
+        /// </summary>
+        /// <param name="client_id">Unique id per merchant</param>
+        /// <param name="client_secret">Unique secret between client and server</param>
+        /// <param name="request">Details of the transaction to process</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<TransactionResult>> ProcessTransaction([FromHeader]string client_id, 
                                                                               [FromHeader]string client_secret, 
                                                                               [FromBody]TransactionRequest request)
         {
-
-            // Authenticate merchant before
-
+            // Authenticate merchant before proceeding 
             return await paymentManager.ProcessPayment(client_id, request);
         }
     }
