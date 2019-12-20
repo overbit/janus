@@ -11,10 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Models\Dtos\" />
     <Folder Include="Models\Dtos\Request\" />
-    <Folder Include="Models\Dtos\Response\" />
     <Folder Include="Configurations\" />
     <Folder Include="Managers\" />
     <Folder Include="Infrastructure\" />

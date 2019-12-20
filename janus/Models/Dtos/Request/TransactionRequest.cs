@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using overapp.janus.Attributes;
 
 namespace overapp.janus.Models.Dtos.Request
 {
@@ -14,6 +15,7 @@ namespace overapp.janus.Models.Dtos.Request
         public double MyProperty { get; set; }
 
         [Required]
+        [StringIsoCurrencyCode]
         public string CurrencyCode { get; set; }
     }
 
