@@ -1,13 +1,22 @@
-﻿using overapp.janus.Models.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using overapp.janus.Models.Domain;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace overapp.janus.Infrastructure.Repositories
 {
     public class MerchantRepository : IMerchantRepository
     {
-        public Task<Merchant> Get(string clientId)
+        private readonly JanusContext context;
+
+        public MerchantRepository(JanusContext context)
         {
-            throw new System.NotImplementedException();
+            this.context = context;
+        }
+
+        public async Task<Merchant> Get(string clientId)
+        {
+            return await context.Merchants.Where(m => m.ClientId == clientId).FirstAsync();
         }
     }
 }

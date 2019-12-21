@@ -6,6 +6,7 @@ namespace overapp.janus.Infrastructure
     public class JanusContext : DbContext
     {
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Merchant> Merchants { get; set; }
 
         public JanusContext() {}
 
