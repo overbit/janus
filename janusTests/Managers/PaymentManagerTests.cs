@@ -1,4 +1,7 @@
 ﻿using System.Threading.Tasks;
+using AutoMapper;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using overapp.janus.Infrastructure.Repositories;
@@ -12,9 +15,11 @@ namespace overapp.janus.Managers.Tests
     [TestFixture]
     public class PaymentManagerTests
     {
-        private Mock<IPaymentRepository> paymentRepoMock; 
-        private Mock<IMerchantRepository> merchantRepoMock; 
+        private Mock<IPaymentRepository> paymentRepoMock;
+        private Mock<IMerchantRepository> merchantRepoMock;
         private Mock<IBankService> bankServiceMock;
+        private Mock<IMapper> mapperMock;
+        private Mock<ILogger<PaymentManager>> loggerMock;
 
         [SetUp]
         public void Setup()
@@ -22,6 +27,8 @@ namespace overapp.janus.Managers.Tests
             paymentRepoMock = new Mock<IPaymentRepository>(MockBehavior.Strict);
             merchantRepoMock = new Mock<IMerchantRepository>(MockBehavior.Strict);
             bankServiceMock = new Mock<IBankService>(MockBehavior.Strict);
+            mapperMock = new Mock<IMapper>();
+            loggerMock = new Mock<ILogger<PaymentManager>>();
         }
 
         [Test]
@@ -86,7 +93,7 @@ namespace overapp.janus.Managers.Tests
                 transaction.Amount.Equals(req.Amount) &&
                 transaction.CurrencyCode == req.CurrencyCode))).Returns(Task.CompletedTask);
 
-            var manager = new PaymentManager(paymentRepoMock.Object, merchantRepoMock.Object, bankServiceMock.Object);
+            var manager = new PaymentManager(paymentRepoMock.Object, merchantRepoMock.Object, bankServiceMock.Object, loggerMock.Object, mapperMock.Object);
 
             // Act 
             var result = await manager.ProcessPayment(clientId, req);

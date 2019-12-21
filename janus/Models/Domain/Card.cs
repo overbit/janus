@@ -1,8 +1,8 @@
 ﻿namespace overapp.janus.Models.Domain
 {
-    public class Card
+    public class Card : BaseCard
     {
-        public string Clue { get; set; }
+        public string Number { get; set; }
 
         public string Cvv { get; set; }
 

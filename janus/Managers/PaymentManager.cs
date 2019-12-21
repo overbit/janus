@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using overapp.janus.Infrastructure.Repositories;
 using overapp.janus.Infrastructure.Services;
-using overapp.janus.Mappers;
 using overapp.janus.Models.Domain;
 using overapp.janus.Models.Dtos.Request;
 using overapp.janus.Models.Dtos.Response;
@@ -18,13 +19,19 @@ namespace overapp.janus.Managers
         private readonly IMerchantRepository merchantRepository;
         private readonly IBankService bankService;
         private ILogger<PaymentManager> logger;
+        private readonly IMapper mapper;
 
-        public PaymentManager(IPaymentRepository paymentRepository, IMerchantRepository merchantRepository, IBankService bankService, ILogger<PaymentManager> logger)
+        public PaymentManager(IPaymentRepository paymentRepository,
+                                IMerchantRepository merchantRepository,
+                                IBankService bankService,
+                                ILogger<PaymentManager> logger,
+                                IMapper mapper)
         {
             this.paymentRepository = paymentRepository;
             this.merchantRepository = merchantRepository;
             this.bankService = bankService;
             this.logger = logger;
+            this.mapper = mapper;
         }
 
         public async Task<TransactionDetails> GetPaymentDetails(string clientId, Guid paymentGuid)
@@ -42,11 +49,16 @@ namespace overapp.janus.Managers
             throw new NotImplementedException();
         }
 
-        public async Task<TransactionResult> ProcessPayment(string clientId, TransactionRequest request)
+        //public async Task<IEnumerable<TransactionResult>> GetPaymentsPerMerchantByDate(string clientId, DateTime dateStart, DateTime dateEnd)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public async Task<TransactionResultDto> ProcessPayment(string clientId, TransactionRequest request)
         {
-            var card = TransactionMapper.MapToDomainCard(request.Card);
-            var billingDetails = TransactionMapper.MapToDomainBillingDetails(request.BillingDetails);
-            
+            var card = mapper.Map<Card>(request.Card);
+            var billingDetails = mapper.Map<BillingDetails>(request.BillingDetails);
+
             var bankResponseTask = bankService.ProcessPayment(card, billingDetails, request.Amount, request.CurrencyCode);
 
             var merchantIdTask = merchantRepository.Get(clientId);
@@ -59,7 +71,7 @@ namespace overapp.janus.Managers
                 Amount = request.Amount,
                 CurrencyCode = request.CurrencyCode,
                 BankTransactionId = bankResponse.Id,
-                Guid = Guid.NewGuid().ToString("N"),
+                ExternalId = Guid.NewGuid().ToString("N"),
                 MerchantId = merchant.Id,
                 BillingDetails = billingDetails,
                 CardDetails = card
@@ -69,17 +81,19 @@ namespace overapp.janus.Managers
             {
                 await paymentRepository.Add(transaction);
             }
-            catch (Exception e)
+            catch (Exception )
             {
                 logger.LogError("Unable to store transaction: ", JsonSerializer.Serialize(transaction));
                 throw;
             }
 
-            return new TransactionResult
+            return new TransactionResultDto
             {
-                Guid = transaction.Guid,
+                Guid = transaction.ExternalId,
                 IsSuccess = bankResponse.Status
             };
         }
+
+        
     }
 }

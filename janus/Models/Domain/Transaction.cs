@@ -7,7 +7,7 @@ namespace overapp.janus.Models.Domain
     {
         public string Id { get; set; }
 
-        public string Guid { get; set; }
+        public string ExternalId { get; set; }
 
         public string BankTransactionId { get; set; }
 
@@ -15,7 +15,7 @@ namespace overapp.janus.Models.Domain
 
         public string CurrencyCode { get; set; }
 
-        public Card CardDetails { get; set; }
+        public BaseCard CardDetails { get; set; }
 
         public BillingDetails BillingDetails { get; set; }
 

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,9 @@ namespace overapp.janus
             // Swagger
             services.AddSwaggerService(Configuration);
 
+            // Automapper
+            services.AddAutoMapper(typeof(Startup));
+
             // DI
 
             // If MS Sql available switch add Microsoft.EntityFrameworkCore.SqlServer and switch to SQL instead of in mem.
@@ -63,7 +67,6 @@ namespace overapp.janus
                 option.SwaggerEndpoint(swaggerConfig.EndpointUrl, swaggerConfig.EndpointName);
                 option.RoutePrefix = string.Empty;
             });
-
 
             app.UseHttpsRedirection();
 
