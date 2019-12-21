@@ -25,14 +25,14 @@ namespace overapp.janus.Controllers
         /// <param name="client_id">Unique id per merchant</param>
         /// <param name="client_secret">Unique secret between client and server</param>
         /// <returns></returns>
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<TransactionDetails>>> ListTransactions([FromHeader]string client_id,
-                                                                                          [FromHeader]string client_secret,
-                                                                                          [FromQuery]int? skip = null, 
-                                                                                          [FromQuery]int? take = null)
-        {
-            return NotFound();
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<TransactionDetails>>> ListTransactions([FromHeader]string client_id,
+        //                                                                                  [FromHeader]string client_secret,
+        //                                                                                  [FromQuery]int? skip = null, 
+        //                                                                                  [FromQuery]int? take = null)
+        //{
+        //    return NotFound();
+        //}
 
         /// <summary>
         /// Get details of a processed payment (transaction)
@@ -42,7 +42,7 @@ namespace overapp.janus.Controllers
         /// <param name="id">Payment / transaction id</param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<TransactionDetails>> GetTransaction([FromHeader]string client_id,
+        public async Task<ActionResult<TransactionDto>> GetTransaction([FromHeader]string client_id,
                                                                            [FromHeader]string client_secret,
                                                                            [FromRoute]string id)
         {
@@ -67,7 +67,7 @@ namespace overapp.janus.Controllers
         /// <param name="request">Details of the transaction to process</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<TransactionResult>> ProcessTransaction([FromHeader]string client_id, 
+        public async Task<ActionResult<TransactionResultDto>> ProcessTransaction([FromHeader]string client_id, 
                                                                               [FromHeader]string client_secret, 
                                                                               [FromBody]TransactionRequest request)
         {

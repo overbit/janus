@@ -1,6 +1,6 @@
 ﻿namespace overapp.janus.Models.Dtos.Response
 {
-    public class TransactionResult
+    public class TransactionResultDto
     {
         /// <summary>
         /// 32 char string representing the payment / transaction id

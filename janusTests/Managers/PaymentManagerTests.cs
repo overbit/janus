@@ -6,8 +6,6 @@ using overapp.janus.Infrastructure.Services;
 using overapp.janus.Models;
 using overapp.janus.Models.Domain;
 using overapp.janus.Models.Dtos.Request;
-using BillingDetails = overapp.janus.Models.Dtos.Request.BillingDetails;
-using Card = overapp.janus.Models.Dtos.Request.Card;
 
 namespace overapp.janus.Managers.Tests
 {
@@ -55,7 +53,7 @@ namespace overapp.janus.Managers.Tests
             {
                 Amount = 1005.3,
                 CurrencyCode = "EUR",
-                BillingDetails = new BillingDetails
+                BillingDetails = new BillingDetailsDto
                 {
                     FirstName = "Massimo",
                     LastName = "Bottura",
@@ -64,7 +62,7 @@ namespace overapp.janus.Managers.Tests
                     City = "Modena",
                     Country = "Italy"
                 },
-                Card = new Card
+                Card = new CardDto
                 {
                     Number = "4111111111111111",
                     Cvv = "123",
@@ -73,16 +71,16 @@ namespace overapp.janus.Managers.Tests
                 }
             };
 
-            merchantRepoMock.Setup(repository => repository.Get(It.IsAny<string>())).ReturnsAsync(new Merchant{ ClientId = clientId, Id = 1 });
-            bankServiceMock.Setup(service => service.ProcessPayment(It.Is<Models.Domain.Card>(card => card.Clue == req.Card.Number &&
+            merchantRepoMock.Setup(repository => repository.Get(It.IsAny<string>())).ReturnsAsync(new Merchant { ClientId = clientId, Id = 1 });
+            bankServiceMock.Setup(service => service.ProcessPayment(It.Is<Card>(card => card.Clue == req.Card.Number &&
                                                                                                       card.Cvv == req.Card.Cvv &&
                                                                                                       card.ExpiryMonth == req.Card.ExpiryMonth &&
-                                                                                                      card.ExpiryYear == req.Card.ExpiryYear), 
-                                                                    It.Is<Models.Domain.BillingDetails>(details => details.FirstName == req.BillingDetails.FirstName &&
-                                                                                                                   details.LastName == req.BillingDetails.LastName), 
-                                                                    req.Amount, 
+                                                                                                      card.ExpiryYear == req.Card.ExpiryYear),
+                                                                    It.Is<BillingDetails>(details => details.FirstName == req.BillingDetails.FirstName &&
+                                                                                                                   details.LastName == req.BillingDetails.LastName),
+                                                                    req.Amount,
                                                                     req.CurrencyCode))
-                            .ReturnsAsync(new TransactionResult { Id = "63ea10672f414485931862a49792699f" , Status = bankProcessedAsSuccess });
+                            .ReturnsAsync(new TransactionResult { Id = "63ea10672f414485931862a49792699f", Status = bankProcessedAsSuccess });
 
             paymentRepoMock.Setup(repository => repository.Add(It.Is<Transaction>(transaction =>
                 transaction.Amount.Equals(req.Amount) &&

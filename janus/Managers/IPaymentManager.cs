@@ -8,12 +8,12 @@ namespace overapp.janus.Managers
 {
     public interface IPaymentManager
     {
-        Task<TransactionResult> ProcessPayment(string clientId, TransactionRequest request);
+        Task<TransactionResultDto> ProcessPayment(string clientId, TransactionRequest request);
 
-        Task<IEnumerable<TransactionResult>> GetPaymentsPerMerchant(string clientId, int? skip = null, int? take = null);
-        
-        Task<IEnumerable<TransactionResult>> GetPaymentsPerMerchantByDate(string clientId, DateTime dateStart, DateTime dateEnd);
+        Task<IEnumerable<TransactionDto>> GetPaymentsPerMerchant(string clientId, int? skip = null, int? take = null);
 
-        Task<TransactionDetails> GetPaymentDetails(string clientId, Guid paymentGuid);
+        //Task<IEnumerable<TransactionDto>> GetPaymentsPerMerchantByDate(string clientId, DateTime dateStart, DateTime dateEnd);
+
+        Task<TransactionDto> GetPaymentDetails(string clientId, Guid paymentGuid);
     }
 }
