@@ -10,13 +10,16 @@ namespace overapp.janus.Mappers
     {
         public TransactionMapperProfile()
         {
-            CreateMap<CardDto, Card>().ForMember(card => card.Clue, opt => opt.MapFrom<MaskCardNumberResolver>());
-            CreateMap<Card, CardDto>().ForMember(dto => dto.Number, opt => opt.MapFrom(card => card.Clue));
+            CreateMap<CardDto, Card>()
+                .ForMember(card => card.Clue, opt => opt.MapFrom<MaskCardNumberResolver>())
+                .ReverseMap();
 
             CreateMap<BillingDetailsDto, BillingDetails>().ReverseMap();
 
             CreateMap<Transaction, TransactionDto>()
-                .ForMember(dto => dto.Id, opt => opt.MapFrom(t => t.ExternalId));
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(t => t.ExternalId))
+                .ForMember(dto => dto.CardClue, opt => opt.MapFrom(t => t.CardDetails.Clue))
+                .ForMember(dto => dto.BillingDetails, opt => opt.MapFrom(t => t.BillingDetails));
         }
     }
 
@@ -25,7 +28,7 @@ namespace overapp.janus.Mappers
         public string Resolve(CardDto source, Card destination, string member, ResolutionContext context)
         {
             var mask = new String('*', 12);
-            var lastDigits = source.Number.Substring(11);
+            var lastDigits = source.Number.Substring(12);
             return $"{mask}{lastDigits}";
         }
     }

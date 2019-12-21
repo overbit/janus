@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
-using Castle.Core.Logging;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using overapp.janus.Infrastructure.Repositories;
 using overapp.janus.Infrastructure.Services;
+using overapp.janus.Mappers;
 using overapp.janus.Models;
 using overapp.janus.Models.Domain;
 using overapp.janus.Models.Dtos.Request;
@@ -18,7 +18,7 @@ namespace overapp.janus.Managers.Tests
         private Mock<IPaymentRepository> paymentRepoMock;
         private Mock<IMerchantRepository> merchantRepoMock;
         private Mock<IBankService> bankServiceMock;
-        private Mock<IMapper> mapperMock;
+        private IMapper mapper;
         private Mock<ILogger<PaymentManager>> loggerMock;
 
         [SetUp]
@@ -27,8 +27,10 @@ namespace overapp.janus.Managers.Tests
             paymentRepoMock = new Mock<IPaymentRepository>(MockBehavior.Strict);
             merchantRepoMock = new Mock<IMerchantRepository>(MockBehavior.Strict);
             bankServiceMock = new Mock<IBankService>(MockBehavior.Strict);
-            mapperMock = new Mock<IMapper>();
             loggerMock = new Mock<ILogger<PaymentManager>>();
+
+            var config = new MapperConfiguration(opts => opts.AddProfile(new TransactionMapperProfile()));
+            mapper = config.CreateMapper();
         }
 
         [Test]
@@ -79,7 +81,7 @@ namespace overapp.janus.Managers.Tests
             };
 
             merchantRepoMock.Setup(repository => repository.Get(It.IsAny<string>())).ReturnsAsync(new Merchant { ClientId = clientId, Id = 1 });
-            bankServiceMock.Setup(service => service.ProcessPayment(It.Is<Card>(card => card.Clue == req.Card.Number &&
+            bankServiceMock.Setup(service => service.ProcessPayment(It.Is<Card>(card => card.Number == req.Card.Number &&
                                                                                                       card.Cvv == req.Card.Cvv &&
                                                                                                       card.ExpiryMonth == req.Card.ExpiryMonth &&
                                                                                                       card.ExpiryYear == req.Card.ExpiryYear),
@@ -93,7 +95,7 @@ namespace overapp.janus.Managers.Tests
                 transaction.Amount.Equals(req.Amount) &&
                 transaction.CurrencyCode == req.CurrencyCode))).Returns(Task.CompletedTask);
 
-            var manager = new PaymentManager(paymentRepoMock.Object, merchantRepoMock.Object, bankServiceMock.Object, loggerMock.Object, mapperMock.Object);
+            var manager = new PaymentManager(paymentRepoMock.Object, merchantRepoMock.Object, bankServiceMock.Object, loggerMock.Object, mapper);
 
             // Act 
             var result = await manager.ProcessPayment(clientId, req);
