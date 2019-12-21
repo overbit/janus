@@ -1,25 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using overapp.janus.Models.Domain;
 
 namespace overapp.janus.Infrastructure.Repositories
 {
     public class PaymentRepository : IPaymentRepository
     {
-        public Task<Transaction> Get(Guid paymentGuid)
+        private readonly JanusContext context;
+
+        public PaymentRepository(JanusContext context)
         {
-            throw new NotImplementedException();
+            this.context = context;
         }
 
-        public Task<IEnumerable<Transaction>> List(IEnumerable<Guid> paymentsGuid)
+        public async Task<Transaction> Get(string paymentExternalId)
         {
-            throw new NotImplementedException();
+            return await context.Transactions.Where(t => t.ExternalId == paymentExternalId).FirstAsync();
         }
 
-        public Task Add(Transaction transaction)
+        public async Task<IEnumerable<Transaction>> GetTransactionsByMerchant(int merchantId)
         {
-            throw new NotImplementedException();
+            return await context.Transactions.Where(t => t.MerchantId == merchantId).ToListAsync();
+        }
+
+        public async Task Add(Transaction transaction)
+        {
+            await context.Transactions.AddAsync(transaction);
+            await context.SaveChangesAsync();
         }
     }
 }

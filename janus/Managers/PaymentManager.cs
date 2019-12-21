@@ -34,19 +34,18 @@ namespace overapp.janus.Managers
             this.mapper = mapper;
         }
 
-        public async Task<TransactionDetails> GetPaymentDetails(string clientId, Guid paymentGuid)
+        public async Task<TransactionDto> GetPaymentDetails(string clientId, Guid paymentGuid)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<TransactionResult>> GetPaymentsPerMerchant(string clientId, int? skip = null, int? take = null)
+        public async Task<IEnumerable<TransactionDto>> GetPaymentsPerMerchant(string clientId, int? skip, int? take)
         {
-            throw new NotImplementedException();
-        }
+            var merchant = await merchantRepository.Get(clientId);
 
-        public async Task<IEnumerable<TransactionResult>> GetPaymentsPerMerchantByDate(string clientId, DateTime dateStart, DateTime dateEnd)
-        {
-            throw new NotImplementedException();
+            var transactions = await paymentRepository.GetTransactionsByMerchant(merchant.Id);
+
+            return transactions.Select(t => mapper.Map<TransactionDto>(t));
         }
 
         //public async Task<IEnumerable<TransactionResult>> GetPaymentsPerMerchantByDate(string clientId, DateTime dateStart, DateTime dateEnd)
