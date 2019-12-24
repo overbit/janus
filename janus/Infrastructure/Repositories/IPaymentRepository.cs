@@ -6,7 +6,7 @@ namespace overapp.janus.Infrastructure.Repositories
 {
     public interface IPaymentRepository
     {
-        Task<Transaction> Get(string paymentExternalId);
+        Task<Transaction> Get(string paymentExternalId, int merchantId);
 
         Task<IEnumerable<Transaction>> GetTransactionsByMerchant(int merchantId);
 

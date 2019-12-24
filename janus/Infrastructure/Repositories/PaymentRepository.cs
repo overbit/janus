@@ -15,9 +15,11 @@ namespace overapp.janus.Infrastructure.Repositories
             this.context = context;
         }
 
-        public async Task<Transaction> Get(string paymentExternalId)
+        public async Task<Transaction> Get(string paymentExternalId, int merchantId)
         {
-            return await context.Transactions.Where(t => t.ExternalId == paymentExternalId).FirstAsync();
+            return await context.Transactions.Where(t => t.ExternalId == paymentExternalId &&
+                                                        t.MerchantId == merchantId)
+                                             .FirstAsync();
         }
 
         public async Task<IEnumerable<Transaction>> GetTransactionsByMerchant(int merchantId)
