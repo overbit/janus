@@ -45,7 +45,14 @@ namespace overapp.janus
             services.AddTransient<IPaymentManager, PaymentManager>();
             services.AddTransient<IPaymentRepository, PaymentRepository>();
             services.AddTransient<IMerchantRepository, MerchantRepository>();
-            services.AddCustomHttpClients();
+
+            services.AddHttpClient<IBankService, BankService>(opt =>
+                {
+                    opt.BaseAddress = Configuration.GetValue<Uri>("ExternalServices:BankAPI");
+                    opt.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+                })
+                .AddPolicyHandler(GetBankApiRetryPolicy())
+                .AddPolicyHandler(GetBankApiCircuitBreakerPolicy());
 
             // If MS Sql available switch add Microsoft.EntityFrameworkCore.SqlServer and switch to SQL instead of in mem.
             //services.AddDbContext<JanusContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Janus")));
@@ -85,19 +92,6 @@ namespace overapp.janus
                 endpoints.MapControllers();
             });
         }
-    }
-
-    internal static class CustomExtensionsMethods
-    {
-        internal static IServiceCollection AddCustomHttpClients(this IServiceCollection services)
-        {
-            //register http services
-            services.AddHttpClient<IBankService, BankService>()
-                .AddPolicyHandler(GetBankApiRetryPolicy())
-                .AddPolicyHandler(GetBankApiCircuitBreakerPolicy());
-
-            return services;
-        }
 
         private static IAsyncPolicy<HttpResponseMessage> GetBankApiRetryPolicy()
         {
@@ -113,6 +107,10 @@ namespace overapp.janus
                 .CircuitBreakerAsync(5, TimeSpan.FromSeconds(15));
         }
 
+    }
+
+    internal static class CustomExtensionsMethods
+    {   
         internal static IServiceCollection AddSwaggerService(this IServiceCollection services, IConfiguration configuration)
         {
             var OpenApiConfig = configuration.GetSection(typeof(OpenApiConfig).Name).Get<OpenApiConfig>();
