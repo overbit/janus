@@ -38,7 +38,31 @@ paths:
               type: object
               properties:
                 card:
-                  $ref: '#/components/schemas/Card'
+                  title: Card
+                  type: object
+                  x-tags:
+                    - payments
+                  properties:
+                    cvv:
+                      type: string
+                      minLength: 3
+                      maxLength: 3
+                      pattern: '[0-9]+'
+                    exp-year:
+                      type: string
+                      minLength: 2
+                      maxLength: 2
+                      pattern: '[0-9]'
+                    exp-month:
+                      type: string
+                      minLength: 2
+                      maxLength: 2
+                      pattern: '[0-9]'
+                    clue:
+                      type: string
+                      minLength: 16
+                      maxLength: 16
+                      pattern: '[0-9]+'
                 amount:
                   type: string
                 currency:
@@ -47,7 +71,27 @@ paths:
                   maxLength: 3
                   pattern: '[A-Z]+'
                 billing-details:
-                  $ref: '#/components/schemas/BillingInformation'
+                  title: BillingInformation
+                  type: object
+                  properties:
+                    address-country:
+                      type: string
+                    address-city:
+                      type: string
+                    address-line:
+                      type: string
+                    last-name:
+                      type: string
+                    first-name:
+                      type: string
+                  required:
+                    - first-name
+                    - last-name
+                    - address-line
+                    - address-city
+                    - address-country
+                  x-tags:
+                    - payments
               required:
                 - card
                 - amount
@@ -60,6 +104,8 @@ components:
     Card:
       title: Card
       type: object
+      x-tags:
+        - payments
       properties:
         cvv:
           type: string
@@ -68,17 +114,19 @@ components:
           pattern: '[0-9]+'
         exp-year:
           type: string
-          format: date
+          minLength: 2
+          maxLength: 2
+          pattern: '[0-9]'
         exp-month:
           type: string
-          format: date
+          minLength: 2
+          maxLength: 2
+          pattern: '[0-9]'
         clue:
           type: string
           minLength: 16
           maxLength: 16
           pattern: '[0-9]+'
-      x-tags:
-        - payments
     BillingInformation:
       title: BillingInformation
       type: object
