@@ -1,5 +1,8 @@
-﻿namespace overapp.janus.Models.Domain
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace overapp.janus.Models.Domain
 {
+    [Table("CreditCards", Schema = "JanusPaymentsSchema")]
     public class BaseCard
     {
         public int Id { get; set; }

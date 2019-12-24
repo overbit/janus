@@ -52,7 +52,7 @@ namespace overapp.janus.Managers
             return transactions.Select(t => mapper.Map<TransactionDto>(t));
         }
 
-        //public async Task<IEnumerable<TransactionResult>> GetPaymentsPerMerchantByDate(string clientId, DateTime dateStart, DateTime dateEnd)
+        //public async Task<IEnumerable<TransactionDto>> GetPaymentsPerMerchantByDate(string clientId, DateTime dateStart, DateTime dateEnd)
         //{
         //    throw new NotImplementedException();
         //}

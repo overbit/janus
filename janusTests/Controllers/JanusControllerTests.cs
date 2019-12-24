@@ -10,7 +10,7 @@ namespace overapp.janus.Controllers.Tests
     public class JanusControllerTests
     {
         [Test()]
-        public void ListTransactionsTest()
+        public void GetTransactionTest()
         {
             Assert.Fail();
         }
