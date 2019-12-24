@@ -17,6 +17,7 @@
     <Folder Include="Models\Dtos\Request\" />
     <Folder Include="Configurations\" />
     <Folder Include="Services\" />
+    <Folder Include="Models\ExternalDtos\" />
   </ItemGroup>
 
   <ItemGroup>

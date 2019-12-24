@@ -5,6 +5,7 @@ using overapp.janus.Mappers;
 using overapp.janus.Models.Domain;
 using overapp.janus.Models.Dtos.Request;
 using overapp.janus.Models.Dtos.Response;
+using overapp.janus.Models.ExternalDtos;
 
 namespace janusTests.Mappers
 {
@@ -66,6 +67,33 @@ namespace janusTests.Mappers
             Assert.AreEqual(expectedTransactionExternalId, dto.Id);
             Assert.AreEqual(transaction.CurrencyCode, dto.CurrencyCode);
             Assert.AreEqual(transaction.Amount, dto.Amount);
+        }
+
+        [Test]
+        public void BankExternalDtosMappingTest()
+        {
+            // Arrange
+            var b = new BillingDetails
+            {
+                FirstName = "first",
+                LastName = "last",
+                AddressLine1 = "line1",
+                AddressLine2 = "line2",
+                City = "city",
+                Country = "country"
+            };
+
+            // Act
+            var mappedBilling = mapper.Map<BankPaymentBillingDetailsDto>(b);
+
+            // Assert
+            Assert.AreEqual(b.FirstName, mappedBilling.FirstName);
+            Assert.AreEqual(b.LastName, mappedBilling.LastName);
+            Assert.AreEqual(b.City, mappedBilling.City);
+            Assert.AreEqual(b.Country, mappedBilling.Country);
+            Assert.AreEqual($"{b.AddressLine1} {b.AddressLine2}", mappedBilling.AddressLine);
+            Assert.AreEqual(b.Country, mappedBilling.Country);
+
         }
     }
 }
