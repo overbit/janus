@@ -12,7 +12,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using overapp.janus.Configurations;
 using overapp.janus.Infrastructure;
+using overapp.janus.Infrastructure.Repositories;
 using overapp.janus.Infrastructure.Services;
+using overapp.janus.Managers;
 using Polly;
 using Polly.Extensions.Http;
 
@@ -40,6 +42,10 @@ namespace overapp.janus
             services.AddAutoMapper(typeof(Startup));
 
             // DI
+            services.AddTransient<IPaymentManager, PaymentManager>();
+            services.AddTransient<IPaymentRepository, PaymentRepository>();
+            services.AddTransient<IMerchantRepository, MerchantRepository>();
+            services.AddCustomHttpClients();
 
             // If MS Sql available switch add Microsoft.EntityFrameworkCore.SqlServer and switch to SQL instead of in mem.
             //services.AddDbContext<JanusContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Janus")));
