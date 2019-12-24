@@ -20,6 +20,7 @@ namespace overapp.janus.Managers.Tests
         private Mock<IBankService> bankServiceMock;
         private IMapper mapper;
         private Mock<ILogger<PaymentManager>> loggerMock;
+        private PaymentManager manager;
 
         [SetUp]
         public void Setup()
@@ -31,12 +32,24 @@ namespace overapp.janus.Managers.Tests
 
             var config = new MapperConfiguration(opts => opts.AddProfile(new TransactionMapperProfile()));
             mapper = config.CreateMapper();
+
+            manager = new PaymentManager(paymentRepoMock.Object, merchantRepoMock.Object, bankServiceMock.Object, loggerMock.Object, mapper);
         }
 
         [Test]
-        public void GetPaymentDetailsTest()
+        public async Task GetPaymentDetailsTest()
         {
-            Assert.Fail();
+            var clientId = "1a34";
+            var transactionId = "12313123";
+            var merchantId = 11;
+
+            merchantRepoMock.Setup(repo => repo.Get(clientId)).ReturnsAsync(new Merchant { ClientId = clientId, Id = merchantId });
+            paymentRepoMock.Setup(repo => repo.Get(transactionId, merchantId)).ReturnsAsync(new Transaction { MerchantId = merchantId, ExternalId = transactionId, Amount = 202.1, Status = true });
+
+            var result = await manager.GetPaymentDetails(clientId, transactionId);
+
+            Assert.AreEqual(transactionId, result.Id);
+            Assert.IsTrue(result.IsSuccess);
         }
 
         //[Test()]
@@ -95,7 +108,6 @@ namespace overapp.janus.Managers.Tests
                 transaction.Amount.Equals(req.Amount) &&
                 transaction.CurrencyCode == req.CurrencyCode))).Returns(Task.CompletedTask);
 
-            var manager = new PaymentManager(paymentRepoMock.Object, merchantRepoMock.Object, bankServiceMock.Object, loggerMock.Object, mapper);
 
             // Act 
             var result = await manager.ProcessPayment(clientId, req);

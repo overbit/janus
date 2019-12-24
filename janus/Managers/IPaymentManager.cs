@@ -14,6 +14,6 @@ namespace overapp.janus.Managers
 
         //Task<IEnumerable<TransactionDto>> GetPaymentsPerMerchantByDate(string clientId, DateTime dateStart, DateTime dateEnd);
 
-        Task<TransactionDto> GetPaymentDetails(string clientId, Guid paymentGuid);
+        Task<TransactionDto> GetPaymentDetails(string clientId, string paymentId);
     }
 }

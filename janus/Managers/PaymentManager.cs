@@ -34,9 +34,13 @@ namespace overapp.janus.Managers
             this.mapper = mapper;
         }
 
-        public async Task<TransactionDto> GetPaymentDetails(string clientId, Guid paymentGuid)
+        public async Task<TransactionDto> GetPaymentDetails(string clientId, string paymentId)
         {
-            throw new NotImplementedException();
+            var merchant = await merchantRepository.Get(clientId);
+
+            var transaction = await paymentRepository.Get(paymentId, merchant.Id);
+
+            return mapper.Map<TransactionDto>(transaction);
         }
 
         public async Task<IEnumerable<TransactionDto>> GetPaymentsPerMerchant(string clientId, int? skip, int? take)
@@ -73,7 +77,8 @@ namespace overapp.janus.Managers
                 ExternalId = Guid.NewGuid().ToString("N"),
                 MerchantId = merchant.Id,
                 BillingDetails = billingDetails,
-                CardDetails = card
+                CardDetails = card,
+                Status = bankResponse.Status
             };
 
             try
@@ -89,7 +94,7 @@ namespace overapp.janus.Managers
             return new TransactionResultDto
             {
                 Guid = transaction.ExternalId,
-                IsSuccess = bankResponse.Status
+                IsSuccess = transaction.Status
             };
         }
 

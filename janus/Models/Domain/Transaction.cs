@@ -5,7 +5,7 @@ namespace overapp.janus.Models.Domain
     [Table("Transactions", Schema = "JanusPaymentsSchema")]
     public class Transaction
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         public string ExternalId { get; set; }
 
@@ -20,5 +20,7 @@ namespace overapp.janus.Models.Domain
         public BillingDetails BillingDetails { get; set; }
 
         public int MerchantId { get; set; }
+
+        public bool Status { get; set; } 
     }
 }
